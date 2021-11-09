@@ -1,0 +1,115 @@
+body{
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+	background: #212026;
+	color: #fff;
+	font-size: 20px;
+}
+hr{
+	border-color : white;
+	background-color : white;
+	color: white;
+}
+
+.btn-inicio {
+	background-color: #212026;
+	color: white;
+	border: 1px solid #396873;
+	border-radius: 5px;
+	font-weight: 700;
+}
+
+.btn-next {
+	background-color: #212026;
+	color: white;
+	border-radius: 5px;
+	border: 1px solid #396873;	
+	font-weight: 700;
+}
+
+.btn-next:hover {
+	background-color: #396873;
+}
+
+.btn-inicio:hover {
+	background-color: #396873;
+}
+
+.text-it {
+	margin-top: 10px;
+	font-size: 16px;
+}
+
+#tableInicial{
+	margin-top: 10px;
+}
+table{
+	table-layout: fixed;
+}
+
+table td:first-child {
+	background-color: #396873;
+}
+
+table tr:first-child {
+	background-color: #396873;
+}
+
+
+table tr:first-child td:first-child{
+	background-color: #73493F;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+
+button{
+	margin: 3px;
+	font-size: 22px;
+}
+
+input{
+	width: 40vh;
+	border-radius: 4px;
+	text-decoration: none;
+	box-shadow: none;
+	text-align: center;
+	border-radius: 3px;
+	color: #0D0D0D;
+}
+span.input-group-text{
+	font-size: 22px;
+}
+
+button#firstPhase, button#solveSimplex, button#stepByStep, button#again {
+	font-size: 18px;
+}
+
+.input-val { 
+	height: 30px;
+	width: 100px;
+	margin-right: 10px;
+}
+
+.input-plus {
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 10px;
+}
+
+.m-text {
+	margin-right: 10px;
+}
+
+.equal-m {
+	margin-left: 10px;
+	margin-right: 10px;
+}
