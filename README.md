@@ -1,4 +1,4 @@
-# SimplexProblemMalomar
+# SimplexProblemSolver
 ---------------------------------
 
 Funcionamento básico
