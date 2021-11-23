@@ -362,3 +362,7 @@ div#buttons {
 button#solveSimplex {
     width: 480px;
 }
+
+div#solution {
+    margin: 25% 0 -59px !important;
+}
