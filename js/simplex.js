@@ -273,14 +273,7 @@ function printResults(matriz, quantDec, quantRes, columnsCount, base) {
         var zValue = matriz[matriz.length - 1][columnsCount - 1]
     }
 
-    $("#solution").append('<div class="col-md-12">A solução ótima é Z = ' + zValue + '</div><br>');
-
-    //imprime os valores de base vars 
-    for (let i = 0; i < quantRes; i++) {
-        var baseName = base[i];
-        var baseValue = matriz[i][columnsCount - 1];
-        $("#results").append('<div class="resultFinal">' + baseName + ' = ' + baseValue + '</div>')
-    }
+    $("#solution").append('<div class="resultFinal col-md-12">A solução ótima é Z = ' + zValue + '</div><br>');
 }
 
 //cria a base e var principal que vão para a mesa
