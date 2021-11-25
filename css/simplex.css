@@ -24,9 +24,9 @@
 .container.align-itens-center {
     background: white;
     border-radius: 30px;
-    padding: 45px;
+    padding: 45px 45px 85px;
     max-width: 900px;
-    margin-top: 50px;
+    margin: 50px 0;
 }
 
 body {
@@ -318,7 +318,7 @@ body.menu-open .plus-btn .r2 {
 }
 
 button#firstPhase {
-    margin-top: -20px;
+    margin-top: -45px;
 }
 
 img.attention-icon {
@@ -328,10 +328,6 @@ img.attention-icon {
 
 .row {
     display: block !important;
-}
-
-div#results {
-    margin-top: 90px;
 }
 
 div#buttons {
@@ -361,4 +357,8 @@ div#buttons {
 
 .btn-start:hover {
     background: #b3b3b3 !important;
+}
+
+button#solveSimplex {
+    width: 480px;
 }
