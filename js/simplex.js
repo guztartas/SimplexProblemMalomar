@@ -1,37 +1,36 @@
+// OBS: malomar é lindo
+// to open and close the menu
 window.onload = function() {
     $('.plus-btn').click(function() {
         $('body').toggleClass('menu-open');
     });
 }
 
-// resolve o algoritmo simplex
+// resolve the simplex
 function solveSimplex(quantDec, quantRes, choice) {
     $("#inputValues").hide();
-
-    var matrizSimplex = getRestrictionValues(quantDec, quantRes); //pega os valores das entradas de restrição
-    matrizSimplex.push(getFunctionzValues(quantDec, quantRes)); //pega os valores das entradas da funçãoZ
-
+    var matrizSimplex = getRestrictionValues(quantDec, quantRes);
+    matrizSimplex.push(getFunctionzValues(quantDec, quantRes));
     var allTables = [];
     var tablesCount = 0;
-    //valor da condição para parar o loop
+
+    // value to loop
     var stopConditionValue = 0;
 
-    //max iterações
+    // maximum interactions
     var iMax = $('#iMax').val()
     if (iMax <= 0) {
         iMax = 20;
     }
 
     var bValues = []
-
     staticTblVars = staticTableVars(quantDec, quantRes);
 
-    //restrições iniciais na base
+    // restrictions
     varsOnBase = staticTblVars[0];
-
     varsOnHead = staticTblVars[1];
 
-    //tamanho da matriz
+    // matriz size
     columnsCount = quantDec + quantRes + 1;
     rowsCount = quantRes + 1;
 
@@ -39,47 +38,47 @@ function solveSimplex(quantDec, quantRes, choice) {
         bValues.push(matrizSimplex[i][columnsCount - 1])
     }
 
-    //mostra a matriz inicial
+    // show de initial matriz
     matrizToTable(matrizSimplex, "Inicial", varsOnHead, varsOnBase, rowsCount, allTables, 0);
     tablesCount++
 
-    //enquanto a linha Z tem números negativos
+    // while the z has negative values
     do {
-        //encontra o número mais baixo na linha da função Z e sua coluna
+        // match the minimum value, line and column
         lowerNumberAndColumn = getLowerNumberAndColumn(matrizSimplex, rowsCount, columnsCount);
         lowerNumber = lowerNumberAndColumn[0];
 
         if (lowerNumber == 0) {
             break;
         }
+
         columnLowerNumber = lowerNumberAndColumn[1];
 
-        //obtém o resultado inferior da divisão entre a última coluna e a coluna de número inferior (funçãoS)
+        // get the result of the dividion beetween the last column and bottom columns
         whoLeavesResults = whoLeavesBase(matrizSimplex, columnLowerNumber, columnsCount, rowsCount, varsOnBase);
         varsOnBase = whoLeavesResults[1];
         pivoRow = whoLeavesResults[0]
         pivoColumn = columnLowerNumber;
         pivoValue = matrizSimplex[pivoRow][pivoColumn];
 
-        //obtem a matriz com atualização de linha dinâmica
+        //get the matriz updated
         matrizSimplex = divPivoRow(matrizSimplex, columnsCount, pivoRow, pivoValue);
 
         //null todos os outros valores na coluna pivo
         matrizSimplex = nullColumnElements(matrizSimplex, pivoRow, pivoColumn, rowsCount, columnsCount);
 
-        //Os valores função recebem a última linha da matriz ('linha Z')
+        //function receiveds the bottom value of Z
         funczValues = matrizSimplex[rowsCount - 1];
 
         hasNegativeOrPositive = funczValues.some(v => v < 0);
 
-        //incrementos condição de parada
         stopConditionValue += 1;
 
         if (stopConditionValue == iMax) {
             break;
         }
 
-        //mostrar matriz parcial 
+        // show parcial matriz
         if (hasNegativeOrPositive == true) {
             matrizToTable(matrizSimplex, "Parcial" + stopConditionValue, varsOnHead, varsOnBase, rowsCount, allTables, tablesCount);
             tablesCount++
@@ -211,12 +210,13 @@ function senseTable(matriz, head, base, quantDec, bValues) {
         }
     }
 }
-//cria uma tabela com os valores da matriz
+
+// make a table with values
 function matrizToTable(matriz, divName, head, base, rowsCount, allTables, aux) {
     $("#auxDiv").html('<div class="row"><div id="divTable' + divName + '" class="offset-md-2 col-md-8 offset-md-2 table-responsive"><hr><div class="row"><h3>Tabela ' + divName + ':</h3></div><table id="table' + divName + '" class="table table-bordered"></table></div></div>')
     var table = $("#table" + divName);
     var row, cell;
-    //copia os valores da matriz, base e principal
+    // copy the values from principal matriz
     var matrizTable = [];
     var headTable = [];
     var baseTable = [];
@@ -236,15 +236,14 @@ function matrizToTable(matriz, divName, head, base, rowsCount, allTables, aux) {
     $("#solveSimplex").remove();
     $("#stepByStep	").remove();
 
-    //a matriz recebe os vars principal e base
-    //anexa vars principal na matriz
+    // matriz receives the values and put
     matrizTable.unshift(headTable);
-    //define as variáveis de base no início de cada linha da matriz
+    // define the values of start
     for (let i = 1, j = 0; i <= rowsCount; i++, j++) {
         matrizTable[i].unshift(baseTable[j]);
     }
 
-    //cria as tabelas
+    // make tables
     for (let i = 0; i < matrizTable.length; i++) {
         row = $('<tr />');
         table.append(row);
@@ -258,14 +257,12 @@ function matrizToTable(matriz, divName, head, base, rowsCount, allTables, aux) {
             row.append(cell);
         }
     }
-    //salva a tabela atual em html
+    // save the actual table in HTML
     allTables[aux] = $('#divTable' + divName + '')[0].outerHTML;
 }
 
-//mostra resultados
+// show results
 function printResults(matriz, quantDec, quantRes, columnsCount, base) {
-    //$(".container").append('<br><div id="solution" class="row"></div>');
-
     if (($("#min").is(':checked'))) {
         var zValue = matriz[matriz.length - 1][columnsCount - 1] * -1;
 
@@ -275,7 +272,7 @@ function printResults(matriz, quantDec, quantRes, columnsCount, base) {
 
     $("#solution").append('<div class="resultFinal col-md-12">A solução ótima é Z = ' + zValue + '</div><br>');
 
-    //imprime os valores de base vars 
+    // show the vars
     for (let i = 0; i < quantRes; i++) {
         var baseName = base[i];
         var baseValue = matriz[i][columnsCount - 1];
@@ -283,18 +280,19 @@ function printResults(matriz, quantDec, quantRes, columnsCount, base) {
     }
 }
 
-//cria a base e var principal que vão para a mesa
+// make the base that will put in table
 function staticTableVars(quantDec, quantRes) {
     base = [];
     head = [];
 
-    //para cada restrição adiciona uma linha na base
+    // for each restriction, create a line
     for (let i = 0; i < quantRes; i++) {
         base.push("f" + (i + 1));
     }
     base.push("Z");
     head.push("Base");
-    //para cada restrição e decisão var adiciona uma linha no cabeçalho
+
+    // for each restriction and decision, added a var in head
     for (let i = 0; i < quantDec; i++) {
         head.push("x" + (i + 1));
     }
@@ -305,20 +303,19 @@ function staticTableVars(quantDec, quantRes) {
 
     return [base, head];
 }
-//null os elementos da coluna
+
 function nullColumnElements(matriz, pivoRow, pivoColumn, rowsCount, columnsCount) {
     for (let i = 0; i < rowsCount; i++) {
 
-        // salta a linha do pivo e os valores já 0 na coluna do pivo
+        // skip the pivot line and the values already 0 in the pivot column
         if (i == pivoRow || matriz[i][pivoColumn] == 0) {
             continue;
         }
-        //pivo aux recebe o próximo número da coluna pivo
+        // pivo receives the next value
         pivoAux = matriz[i][pivoColumn];
 
-        //loop para coluna pivo nula
         for (let j = 0; j < columnsCount; j++) {
-            //valor da matriz atual = valores da linha pivo multiplicados pelo valor pivo aux mais real da matriz negativae
+            // put the matriz actual value as pivo line
             matriz[i][j] = (matriz[pivoRow][j] * (pivoAux * -1)) + matriz[i][j];
 
         }
@@ -327,7 +324,7 @@ function nullColumnElements(matriz, pivoRow, pivoColumn, rowsCount, columnsCount
     return matriz
 }
 
-//divide cada valor da linha pivo / valor pivo
+// pivo line / pivo value
 function divPivoRow(matriz, columnsCount, pivoRow, pivoValue) {
     for (var i = 0; i < columnsCount; i++) {
         matriz[pivoRow][i] = matriz[pivoRow][i] / pivoValue;
@@ -336,15 +333,13 @@ function divPivoRow(matriz, columnsCount, pivoRow, pivoValue) {
     return matriz;
 }
 
-// divisão da coluna b e o número inferior da coluna
-// adiciona a var à coluna de base e retorna a linha de resultado inferior
+// added the var to column of base and return the line with bottom result
 function whoLeavesBase(matriz, columnLowerNumber, columnsCount, rowsCount, varsOnBase) {
     var lowerResult = 99999999999999999999999;
     var lowerResultRow;
 
-    //loop até a última linha Z sem função
     for (let i = 0; i < rowsCount - 1; i++) {
-        //não permite dividir por 0
+
         if (!(matriz[i][columnLowerNumber] == 0)) {
             currentValue = 0;
             currentValue = matriz[i][columnsCount - 1] / matriz[i][columnLowerNumber]
@@ -358,17 +353,17 @@ function whoLeavesBase(matriz, columnLowerNumber, columnsCount, rowsCount, varsO
 
         }
     }
+
     if (lowerResultRow == undefined) {
         pauseSolution()
     } else {
-        //adiciona var de decisão à base
         varsOnBase[lowerResultRow] = "x" + (columnLowerNumber + 1)
         return [lowerResultRow, varsOnBase];
     }
 
 }
 
-//retornar os valores de entrada de restrição
+// return the enter restriction values
 function getRestrictionValues(quantDec, quantRes) {
     var resValues = [];
     var xvalue = [];
@@ -410,7 +405,7 @@ function getRestrictionValues(quantDec, quantRes) {
     return resValues;
 }
 
-//retornar valores de entrada da função Z
+// return the Z enter values
 function getFunctionzValues(quantDec, quantRes) {
     var funcValues = [];
     var xvalue = [];
@@ -436,17 +431,13 @@ function getFunctionzValues(quantDec, quantRes) {
     return funcValues;
 }
 
-//retorna o menor número na função Z e sua coluna
+// return the bottom Z value
 function getLowerNumberAndColumn(matriz, rowCount, columnCount) {
     var column = 0;
-
-    rowCount -= 1; // rowCount agora tem o valor correto para usar
-
+    rowCount -= 1;
     var lowerNumber = matriz[rowCount][0];
 
-    //loop functionZ array para encontrar o valor numérico mais baixo 
     for (let j = 1, i = rowCount; j < columnCount - 1; j++) {
-        //certifique-se de que lowerNumber tenha o menor valor
         if (matriz[i][j] < lowerNumber) {
             lowerNumber = matriz[i][j];
             column = j;
@@ -455,19 +446,16 @@ function getLowerNumberAndColumn(matriz, rowCount, columnCount) {
     return [lowerNumber, column];
 }
 
-//finaliza a aplicação
 function pauseSolution() {
     $(".container").remove()
-
     $("body").append('<div class="container"><div class="row"><div class="offset-md-2 col-md-8 offset-md-2"><h1>Solução impossível</h1></div></div></div>');
     $(".container").append('<div class="row"><div class="offset-md-4 col-md-4 offset-md-4"><button id="back" class="btn btn-primary" onclick="location.reload();" >Voltar</button></div>	</div>')
 }
 
-//gera entradas de função Z e entradas de restrições
 function firstPhase() {
     $(document).ready(function() {
 
-        //obtem quantidade de variáveis de decisão
+        // get the decision quantity
         var quantDec = $("input[name=quantDecision]").val();
         if (quantDec.length == 0 || quantDec == '0') {
             alert('Você precisa inserir valores na variavel de decisão');
@@ -479,7 +467,7 @@ function firstPhase() {
             }
         }
 
-        //obtem quantidade de restrições
+        // get the restriction quantity
         var quantRes = $("input[name=quantRestriction]").val();
         if (quantRes.length == 0 || quantRes == '0') {
             alert('Você precisa inserir valores na variavel de restrição');
@@ -490,29 +478,25 @@ function firstPhase() {
                 return;
             }
         }
-        //esconda o botão da primeira fase
+
+        // front control
         $("#firstPhase").remove();
         $("#startInputs").hide();
-
         generateFunctionZ(quantDec);
-
         generateRestrictions(quantDec, quantRes);
-
-        //adiciona um botão que chama a segunda fase do processo
         $("#inputValues").append('<div id="buttons" class="row"><div class="col-md-6 mt-3"><button id="solveSimplex" onclick="solveSimplex(' + quantDec + ',' + quantRes + ',1)" class="btn btn-next">Solução direta</button></div></div>');
-
         $(".container").append('<div id="solution" class="row"></div>')
         $(".container").append('<br><div class="row"><div id="results" class="col-md"></div></div>');
 
     });
 }
 
-// gerar entradas functionZ
+// make the Z enters 
 function generateFunctionZ(quantDec) {
     $(".container").append('<div id="inputValues"></div>');
     $("#inputValues").append('<br><div class="row"><div class="input-group mb-3 d-flex justify-content-center align-items-center" id="funcZ"></div></div>');
     $("#funcZ").append('<h5>Função Z =</h5><span class="px-2">');
-    // adiciona as entradas da função Z ao corpo da página
+
     for (let i = 1; i <= quantDec; i++) {
 
         $("#funcZ").append('<input class="input-val" type="number" name="valX' + i + '">');
@@ -529,13 +513,11 @@ function generateFunctionZ(quantDec) {
     input.focus();
 }
 
-//gerar entradas de restrições
+// make the enter restrictions
 function generateRestrictions(quantDec, quantRes) {
     $("#inputValues").append('<div class="row"><div class="col-md-12 mb-3 mt-3" id="divRestTitle"><h5>Restrições:</h5></div></div>');
 
-    //adiciona as entradas de restrições ao corpo
     for (let i = 1; i <= quantRes; i++) {
-
         $("#inputValues").append('<div class="row"><div class="input-group mb-3 d-flex justify-content-center align-items-center" id=divRes' + i + '></div></div>');
 
         for (let j = 1; j <= quantDec; j++) {
@@ -546,7 +528,7 @@ function generateRestrictions(quantDec, quantRes) {
                 $("#divRes" + i).append('<div><span>x' + j + ' </span></div>');
             }
         }
-        //adiciona ao corpo a expressão '<=' e a entrada do valor de restrição
+
         $("#divRes" + i).append('<span></span><div><span class="equal-m"><b>&le;</b></span></div><input class="input-val" type="number" name="valRestriction' + i + '">');
     }
 }
